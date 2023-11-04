@@ -20,9 +20,25 @@ option(Code, Message, ChatbotCodeLink, InitialFlowCodeLink, Keyword, [Code, Mess
 % Predicado: flow/4
 % Dom: id (int) X name-msg (String)  X Option  (Lista de 0 o maa opciones) X Flow
 % Meta Primaria: flow/4
-% Meta Secundaria: 
-flow(Id, NameMsg, Option, [Id, NameMsg, Option]).
-% ver como agregar flujos sin duplicado
+% Meta Secundaria: addWithoutDuplicates/3
+flow(Id, NameMsg, Options, [Id, NameMsg, OptionsWithoutDuplicates]) :-
+    addWithoutDuplicates(Options, [], OptionsWithoutDuplicates).
+
+noPertenece(Elemento, Lista) :-
+    \+ member(Elemento, Lista).
+
+% Caso base, lista vacia devuelve otra lista vacia
+addWithoutDuplicates([], ListaInputAcc, ListaInputAcc).
+
+% Si la cabeza (Elemento) no esta en la lista de salida, se agrega
+addWithoutDuplicates([Elemento|Resto], ListaInputAcc, ListaOutput) :-
+    noPertenece(Elemento, ListaInputAcc),
+    addWithoutDuplicates(Resto, [Elemento|ListaInputAcc], ListaOutput).
+
+% Si la cabeza (Elemento) ya esta en la lista de salida, se omite
+addWithoutDuplicates([Elemento|Resto], ListaInputAcc, ListaOutput) :-
+    member(Elemento, ListaInputAcc),
+    addWithoutDuplicates(Resto, ListaInputAcc, ListaOutput).
 
 %====================================================================%
 % RF4: TDA Flow - modificador
@@ -47,14 +63,66 @@ flowAddOption(FlowInput, NewOptionInput, NewFlow):-
     flow(IdInput, NameMsgInput, NewOptions, NewFlow).
 
 %====================================================================%
-% RF5: TDA chatbot - constructor. 
+% RF5: TDA chatbot - constructor
 %====================================================================%
 % Predicado: 
 % Dom: chatbotID (int) X name (String) X welcomeMessage (String) X startFlowId(int) X  flows (Lista de 0 o más flujos) X chabot
 % Meta Primaria: 
 % Meta Secundaria:
+chatbot(ChatbotId, Name, WelcomeMsg, StartFlowId, Flows, [ChatbotId, Name, WelcomeMsg, StartFlowId, Flows]).
 
 
+%====================================================================%
+% RF6: TDA chatbot - modificador
+%====================================================================%
+% Predicado: 
+% Dom: chatbot X flow X chatbot
+% Meta Primaria: 
+% Meta Secundaria:
+ 
+
+
+%====================================================================%
+% RF7: TDA system - constructor
+%====================================================================%
+% Predicado: 
+% Dom: name (string) X InitialChatbotCodeLink (Int) X chatbots (Lista de 0 o más chatbots) X system
+% Meta Primaria: 
+% Meta Secundaria:
+
+% Consulta:
+%creando la un nuevo sistema de chatbots con nombre “NewSystem”
+%system("NewSystem", 0, [ ], S0).
+%alternativamente podría usarse:
+%system( "NewSystem", 1, [CB11], S1).
+
+
+%====================================================================%
+% RF8: TDA system - modificador 
+%====================================================================%
+% Predicado: 
+% Dom: system X chatbot X system
+% Meta Primaria: 
+% Meta Secundaria:
+% 
+% Consulta:
+%añadiendo un chatbot al sistema.
+%el resultado alcanzado en s1 es equivalente al ilustrado en s1 de la función 7.
+%systemAddChatbot(S0, CB11, S1).
+
+
+%====================================================================%
+% RF9: TDA system - modificador. 
+%====================================================================%
+% Predicado: 
+% Dom: system X user (string) X system
+% Meta Primaria: 
+% Meta Secundaria:
+
+% Consulta:
+%añadiendo dos usuarios al sistema
+%systemAddUser(S1, “user0”, S2),
+%systemAddUser(S2, “user1”, S3).
 
 
 
@@ -67,3 +135,7 @@ flowAddOption(FlowInput, NewOptionInput, NewFlow):-
 % Dom: 
 % Meta Primaria: 
 % Meta Secundaria:
+
+
+% Consulta:
+
