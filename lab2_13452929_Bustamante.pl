@@ -12,7 +12,6 @@
 % Meta Primaria: option/6
 % Meta Secundaria: 
 option(Code, Message, ChatbotCodeLink, InitialFlowCodeLink, Keyword, [Code, Message, ChatbotCodeLink, InitialFlowCodeLink, Keyword]).
-% ver como agregar opciones sin duplicado
 
 %====================================================================%
 % RF3: TDA Flow - constructor
@@ -65,64 +64,34 @@ flowAddOption(FlowInput, NewOptionInput, NewFlow):-
 %====================================================================%
 % RF5: TDA chatbot - constructor
 %====================================================================%
-% Predicado: 
-% Dom: chatbotID (int) X name (String) X welcomeMessage (String) X startFlowId(int) X  flows (Lista de 0 o más flujos) X chabot
-% Meta Primaria: 
-% Meta Secundaria:
-chatbot(ChatbotId, Name, WelcomeMsg, StartFlowId, Flows, [ChatbotId, Name, WelcomeMsg, StartFlowId, Flows]).
-
+% Predicado: chatbot/6
+% Dom: chatbotID (int) X name (String) X welcomeMessage (String) X startFlowId(int) X  flows (Lista de 0 o mas flujos) X chabot
+% Meta Primaria: chatbot/6
+% Meta Secundaria: addWithoutDuplicates/3
+chatbot(ChatbotId, Name, WelcomeMsg, StartFlowId, Flows, [ChatbotId, Name, WelcomeMsg, StartFlowId, FlowsWithoutDuplicates]) :-
+    addWithoutDuplicates(Flows, [], FlowsWithoutDuplicates).
 
 %====================================================================%
 % RF6: TDA chatbot - modificador
 %====================================================================%
-% Predicado: 
+% Predicado: chatbotAddFlow/3
 % Dom: chatbot X flow X chatbot
-% Meta Primaria: 
-% Meta Secundaria:
- 
+% Meta Primaria: chatbotAddFlow/3
+% Meta Secundaria: chatbot/6, addFlowToChatBot/3
 
+% agregar flujo a los flujos del ChatBot
+addFlowToChatBot(Flow, ListaFlows, NewListaFlows) :-
+    agregarAlPrincipio(Flow, ListaFlows, NewListaFlows).
 
-%====================================================================%
-% RF7: TDA system - constructor
-%====================================================================%
-% Predicado: 
-% Dom: name (string) X InitialChatbotCodeLink (Int) X chatbots (Lista de 0 o más chatbots) X system
-% Meta Primaria: 
-% Meta Secundaria:
+chatbotAddFlow(ChatBotInput, NewFlowInput, NewChatBotFlow) :-
+    % debemos llamar al constructor de ChatBot, tomo los valores del ChatBot que me llega
+    chatbot(CbIdInput, NameInput, WelcomeMsgInput, StartFlowIdInput, FlowsInput, ChatBotInput),
+    % agregar flujo a los flujos del ChatBot, devuelve lista de flujos con flujo nuevo
+    addFlowToChatBot(NewFlowInput, FlowsInput, NewFlows),
+    % llamar al constructor con el Chatbot con nuevos flujos
+    chatbot(CbIdInput, NameInput, WelcomeMsgInput, StartFlowIdInput, NewFlows, NewChatBotFlow).
+	
 
-% Consulta:
-%creando la un nuevo sistema de chatbots con nombre “NewSystem”
-%system("NewSystem", 0, [ ], S0).
-%alternativamente podría usarse:
-%system( "NewSystem", 1, [CB11], S1).
-
-
-%====================================================================%
-% RF8: TDA system - modificador 
-%====================================================================%
-% Predicado: 
-% Dom: system X chatbot X system
-% Meta Primaria: 
-% Meta Secundaria:
-% 
-% Consulta:
-%añadiendo un chatbot al sistema.
-%el resultado alcanzado en s1 es equivalente al ilustrado en s1 de la función 7.
-%systemAddChatbot(S0, CB11, S1).
-
-
-%====================================================================%
-% RF9: TDA system - modificador. 
-%====================================================================%
-% Predicado: 
-% Dom: system X user (string) X system
-% Meta Primaria: 
-% Meta Secundaria:
-
-% Consulta:
-%añadiendo dos usuarios al sistema
-%systemAddUser(S1, “user0”, S2),
-%systemAddUser(S2, “user1”, S3).
 
 
 
