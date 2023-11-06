@@ -92,7 +92,24 @@ chatbotAddFlow(ChatBotInput, NewFlowInput, NewChatBotFlow) :-
     chatbot(CbIdInput, NameInput, WelcomeMsgInput, StartFlowIdInput, NewFlows, NewChatBotFlow).
 	
 
+%====================================================================%
+% RF7: TDA system - constructor
+%====================================================================%
+% Predicado: system/4
+% Dom: name (string) X InitialChatbotCodeLink (Int) X chatbots (Lista de 0 o mas chatbots) X system
+% Meta Primaria: system/4
+% Meta Secundaria: addWithoutDuplicates/3
+system(Name, InitialChatbotCodeLink, Chatbots, [Name, InitialChatbotCodeLink, ChatbotsWithoutDuplicates]) :-
+    addWithoutDuplicates(Chatbots, [], ChatbotsWithoutDuplicates).
 
+%El sistema además de contener los distintos chatbots, también contiene el chatHistory 
+%de cada usuario que interactúa con el sistema. Sobre el chatHistory, éste corresponde 
+%al registro completo del diálogo entre usuario y cada uno de los chatbots con los que interactúa. 
+%El historial se mantiene para cada usuario y debe tener el String formateado de cada mensaje del usuario 
+%y chatbot (para luego ser visualizado con el predicado write), fecha, hora y emisor (usuario o sistema).
+
+%system(Name, InitialChatbotCodeLink, Chatbots, User, ChatHistory, [Name, InitialChatbotCodeLink, ChatbotsWithoutDuplicates]) :-
+   
 
 
 
