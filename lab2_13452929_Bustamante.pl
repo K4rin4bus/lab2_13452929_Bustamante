@@ -5,6 +5,27 @@
 % TDAs
 
 %====================================================================%
+%
+%====================================================================%
+
+% Caso base, lista vacia devuelve otra lista vacia
+addWithoutDuplicates([], ListaInputAcc, ListaInputAcc).
+
+% Si la cabeza (Elemento) no esta en la lista de salida, se agrega
+addWithoutDuplicates([Elemento|Resto], ListaInputAcc, ListaOutput) :-
+    noPertenece(Elemento, ListaInputAcc),
+    addWithoutDuplicates(Resto, [Elemento|ListaInputAcc], ListaOutput).
+
+% Si la cabeza (Elemento) ya esta en la lista de salida, se omite
+addWithoutDuplicates([Elemento|Resto], ListaInputAcc, ListaOutput) :-
+    member(Elemento, ListaInputAcc),
+    addWithoutDuplicates(Resto, ListaInputAcc, ListaOutput).
+
+
+noPertenece(Elemento, Lista) :-
+    \+ member(Elemento, Lista).
+
+%====================================================================%
 % RF2: TDA Option - constructor
 %====================================================================%
 % Predicado: option/6
@@ -22,22 +43,6 @@ option(Code, Message, ChatbotCodeLink, InitialFlowCodeLink, Keyword, [Code, Mess
 % Meta Secundaria: addWithoutDuplicates/3
 flow(Id, NameMsg, Options, [Id, NameMsg, OptionsWithoutDuplicates]) :-
     addWithoutDuplicates(Options, [], OptionsWithoutDuplicates).
-
-noPertenece(Elemento, Lista) :-
-    \+ member(Elemento, Lista).
-
-% Caso base, lista vacia devuelve otra lista vacia
-addWithoutDuplicates([], ListaInputAcc, ListaInputAcc).
-
-% Si la cabeza (Elemento) no esta en la lista de salida, se agrega
-addWithoutDuplicates([Elemento|Resto], ListaInputAcc, ListaOutput) :-
-    noPertenece(Elemento, ListaInputAcc),
-    addWithoutDuplicates(Resto, [Elemento|ListaInputAcc], ListaOutput).
-
-% Si la cabeza (Elemento) ya esta en la lista de salida, se omite
-addWithoutDuplicates([Elemento|Resto], ListaInputAcc, ListaOutput) :-
-    member(Elemento, ListaInputAcc),
-    addWithoutDuplicates(Resto, ListaInputAcc, ListaOutput).
 
 %====================================================================%
 % RF4: TDA Flow - modificador
@@ -111,7 +116,46 @@ system(Name, InitialChatbotCodeLink, Chatbots, [Name, InitialChatbotCodeLink, Ch
 %system(Name, InitialChatbotCodeLink, Chatbots, User, ChatHistory, [Name, InitialChatbotCodeLink, ChatbotsWithoutDuplicates]) :-
    
 
+%====================================================================%
+% RF8: TDA system - modificador 
+%====================================================================%
+% Predicado: systemAddChatbot
+% Dom: system X chatbot X system
+% Meta Primaria: 
+% Meta Secundaria:
+% 
+%% agregar Cb a los ChatBots del System
+addChatBotToSystem(ChatBot, ListaChatBots, NewListaChatBots) :-
+    agregarAlPrincipio(ChatBot, ListaChatBots, NewListaChatBots).
 
+
+% chatbotAddFlow(ChatBotInput, NewFlowInput, NewChatBotFlow) :-
+systemAddChatbot(SystemInput, NewCBInput, NewSystemCB) :-
+    % debemos llamar al constructor de System, tomo los valores del system que me llega
+    % chatbot(CbIdInput, NameInput, WelcomeMsgInput, StartFlowIdInput, FlowsInput, ChatBotInput),
+    system(NameInput, InitialChatbotCodeLinkInput, ChatbotsInput, SystemInput),
+    % agregar CB a los ChatBots, devuelve lista de ChatBots con CB nuevo
+    %addFlowToChatBot(NewFlowInput, FlowsInput, NewFlows),
+    addChatBotToSystem(NewCBInput, ChatbotsInput, NewChatBots),
+    % llamar al constructor con el Chatbot con nuevos flujos
+    %chatbot(CbIdInput, NameInput, WelcomeMsgInput, StartFlowIdInput, NewFlows, NewChatBotFlow).
+    system(NameInput, InitialChatbotCodeLinkInput, NewChatBots, NewSystemCB).
+% 
+
+
+
+%====================================================================%
+% RF9: TDA system - modificador. 
+%====================================================================%
+% Predicado: 
+% Dom: system X user (string) X system
+% Meta Primaria: 
+% Meta Secundaria:
+
+% Consulta:
+%añadiendo dos usuarios al sistema
+%systemAddUser(S1, “user0”, S2),
+%systemAddUser(S2, “user1”, S3).
 
 
 %====================================================================%
