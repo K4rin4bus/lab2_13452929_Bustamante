@@ -29,8 +29,8 @@ noPertenece(Elemento, Lista) :-
 % Constructor de system para otros RF
 %====================================================================%
 
-system(Name, InitialChatbotCodeLink, Chatbots, Users, CurrentUser, [Name, InitialChatbotCodeLink, ChatbotsWithoutDuplicates, Users, CurrentUser]) :-
-    addWithoutDuplicates(Chatbots, [], ChatbotsWithoutDuplicates).
+%system(Name, InitialChatbotCodeLink, Chatbots, Users, CurrentUser, [Name, InitialChatbotCodeLink, ChatbotsWithoutDuplicates, Users, CurrentUser]) :-
+%    addWithoutDuplicates(Chatbots, [], ChatbotsWithoutDuplicates).
 
 %====================================================================%
 % RF2: TDA Option - constructor
@@ -120,54 +120,67 @@ system(Name, InitialChatbotCodeLink, Chatbots, [Name, InitialChatbotCodeLink, Ch
 %El historial se mantiene para cada usuario y debe tener el String formateado de cada mensaje del usuario 
 %y chatbot (para luego ser visualizado con el predicado write), fecha, hora y emisor (usuario o sistema).
 
-%system(Name, InitialChatbotCodeLink, Chatbots, Users, CurrentUser, [Name, InitialChatbotCodeLink, ChatbotsWithoutDuplicates, Users, CurrentUser]) :-
-%    addWithoutDuplicates(Chatbots, [], ChatbotsWithoutDuplicates).
+system(Name, InitialChatbotCodeLink, Chatbots, Users, CurrentUser, [Name, InitialChatbotCodeLink, ChatbotsWithoutDuplicates, Users, CurrentUser]) :-
+    addWithoutDuplicates(Chatbots, [], ChatbotsWithoutDuplicates).
 
 %====================================================================%
 % RF8: TDA system - modificador 
 %====================================================================%
 % Predicado: systemAddChatbot
 % Dom: system X chatbot X system
-% Meta Primaria: 
-% Meta Secundaria:
-% 
-%% agregar Cb a los ChatBots del System
+% Meta Primaria: systemAddChatbot/3
+% Meta Secundaria: system/4, addChatBotToSystem/3, system/6
+
+% agregar Cb a los ChatBots del System
 addChatBotToSystem(ChatBot, ListaChatBots, NewListaChatBots) :-
     agregarAlPrincipio(ChatBot, ListaChatBots, NewListaChatBots).
 
-
-% chatbotAddFlow(ChatBotInput, NewFlowInput, NewChatBotFlow) :-
+%System/4
 systemAddChatbot(SystemInput, NewCBInput, NewSystemCB) :-
     % debemos llamar al constructor de System, tomo los valores del system que me llega
-    %  system(NameInput, InitialChatbotCodeLinkInput, ChatbotsInput, UsersInput, CurrentUserInput, SystemInput),
     system(NameInput, InitialChatbotCodeLinkInput, ChatbotsInput, SystemInput),
     % agregar CB a los ChatBots, devuelve lista de ChatBots con CB nuevo
     addChatBotToSystem(NewCBInput, ChatbotsInput, NewChatBots),
     % llamar al constructor con el Syatem y el nuebo chatbots
-    %system(NameInput, InitialChatbotCodeLinkInput, NewChatBots, UsersInput, CurrentUserInput, NewSystemCB).
     system(NameInput, InitialChatbotCodeLinkInput, NewChatBots, NewSystemCB).
 
-
+%System/6
+systemAddChatbot(SystemInput, NewCBInput, NewSystemCB) :-
+    % debemos llamar al constructor de System, tomo los valores del system que me llega
+    system(NameInput, InitialChatbotCodeLinkInput, ChatbotsInput, UsersInput, CurrentUserInput, SystemInput),
+    % agregar CB a los ChatBots, devuelve lista de ChatBots con CB nuevo
+    addChatBotToSystem(NewCBInput, ChatbotsInput, NewChatBots),
+    % llamar al constructor con el Syatem y el nuebo chatbots
+    system(NameInput, InitialChatbotCodeLinkInput, NewChatBots, UsersInput, CurrentUserInput, NewSystemCB).
+    
 %====================================================================%
 % RF9: TDA system - modificador. 
 %====================================================================%
-% Predicado: systemAddUser
+% Predicado: systemAddUser/3
 % Dom: system X user (string) X system
-% Meta Primaria: 
-% Meta Secundaria:
+% Meta Primaria: systemAddUser
+% Meta Secundaria: getUsers/2, noPertenece/2, setAddUserInUsers/3, setAddUserstoSystem/3
+
+%Selecciona lista de usuarios del sistema
+getUsers(SystemInput, Users) :-
+    system(_, _, _, Users, _, SystemInput).
+
+% agregar usuario a lista de usuario
+setAddUserInUsers(ListaUsers, Users, NuevaListaUsers) :-
+    append(ListaUsers, [_], NuevaListaUsers).
+
+% agregar nueva lista de usuarios al sistema
+setAddUserstoSystem(SystemInput, NuevaListaUsers, NewSystem) :-
+     system(NameInput, InitialChatbotCodeLinkInput, NewChatBots, _, CurrentUserInput, SystemInput),
+     system(NameInput, InitialChatbotCodeLinkInput, NewChatBots, NuevaListaUsers, CurrentUserInput, NewSystem).
+
 
 % creando el usuario "user1"
-systemAddUser(SystemInput, NewUser, NewSystem):-
+systemAddUser(SystemInput, NewUserInput, NewSystem) :-
     getUsers(SystemInput, Users),
-    notExistsUser(NewUser, Users), 
-    setAddUserInUsers(Users, NewUser, UpdatedUsers),
-    setUsers(SystemInput, UpdatedUsers, NewSystem).
+    setAddUserInUsers(Users, NewUserInput, NuevaListaUsers),
+    setAddUserstoSystem(SystemInput, NuevaListaUsers, NewSystem).
 
-
-% Consulta:
-%añadiendo dos usuarios al sistema
-%systemAddUser(S1, “user0”, S2),
-%systemAddUser(S2, “user1”, S3).
 
 
 %====================================================================%
